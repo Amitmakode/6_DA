@@ -1,0 +1,220 @@
+use class_6 ;
+
+after/before
+insert/update/delete
+
+
+create table trigger1 (
+c1 varchar(50),
+c2 date,
+c3 int);
+
+create table trigger2 (
+c11 varchar(50),
+c12 date,
+c13 int);
+
+insert into trigger1 value ("java", "2000-12-12", 500) ;
+
+select * from trigger1 ;
+
+select * from trigger2 ;
+
+
+delimiter //
+create trigger t1_to_t2
+after insert on trigger1 for each row 
+begin
+	insert into trigger2(c11,c12,c13) values ("xyz", sysdate(), 120);
+end; //
+
+show triggers ;
+
+insert into trigger1 value ("java", "2000-12-12", 500) ;
+
+
+create table T1(
+course_id int , 
+course_desc varchar(50),
+course_mentor varchar(60),
+course_price int ,
+course_discount int,
+create_date date);
+
+create table T2(
+course_metor_update varchar(50), 
+course_price_update int ,
+course_discount_update int );
+
+
+insert into t1 ( 
+course_id, course_desc, course_mentor, course_price, course_discount) 
+value(101, "FSDA", "sudhanshu", 4000, 100);
+
+
+select * from t1 ;
+
+delimiter //
+create trigger t1_before_insert
+before insert on t1 for each row
+begin
+	set new.create_date = sysdate();
+end; // 
+
+
+select * from t2 ;
+
+delimiter //
+create trigger t1_insert
+after insert on t1 for each row
+begin
+	insert into t2 values (new.course_mentor, new.course_price, new.course_discount);
+end; // 
+
+select * from t1 ;
+select * from t2 ;
+
+insert into t1 ( 
+course_id, course_desc, course_mentor, course_price, course_discount) 
+value(102, "FSDA", "sudhanshu", 4000, 100);
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2
+
+
+create table T3(
+course_metor_update varchar(50), 
+course_price_update int ,
+course_current_time time );
+
+delimiter //
+create trigger t1_to_t3
+after insert on t1 for each row 
+begin
+	insert into t3(course_current_time) values ( CURRENT_TIME());
+end; //
+
+select * from t3 ;
+
+create table T4(
+c21 varchar(50), 
+c22 int ,
+c23 time );
+
+
+delimiter //
+create trigger to_update1
+before update on t1 for each row 
+begin
+	insert into t4 (c21, c22,c23) 
+    values ("amit", 6567, current_time());
+end; //
+
+
+select * from t4 ;
+
+
+update t1 set course_id = 103 where course_id = 102 ;
+
+---------------------------------------------------------------
+
+
+create table test1(
+c1 varchar(50),
+c2 date,
+c3 int);
+
+
+create table test2(
+c11 varchar(50),
+c12 date,
+c13 int );
+
+insert into test1 values ("abc", sysdate(), 205);
+
+select * from test1 ;
+
+select * from test2 ;
+
+
+delete from test1 where c3 = 201 ;
+
+
+
+delimiter //
+create trigger to_delete_others_before_observation
+before delete on test1 for each row 
+begin
+	insert into test2(c11,c12,c13) values(old.c1, old.c2,old.c3);
+end; //
+
+
+show tables ;
+
+select * from sales limit 10 offset 660 ;
+
+
+create view demo_view as select customer_name, segment, state, country, region, profit, sales, quantity from sales ;
+
+select * from demo_view ;
+
+---------------------------
+
+select concat(country, " ", state) as new_column from demo_view ;  
+
+alter table demo_view
+add column new_col varchar(40) ;
+
+alter view demo_view
+add column new_col varchar(40) ;
+
+select new_col from sales ;
+
+alter table sales
+modify new_col varchar(100) ;
+
+update sales 
+set new_col = concat(country, " ", state) ;
+
+
+SELECT SUBSTRING(category, 1, 3) AS cat FROM sales;
+
+SELECT SUBSTRING(category, 5, 10) AS id FROM sales;
+
+select category from sales
+
+
+SELECT  category, UPPER(category) AS up_cat FROM sales;
+
+SELECT  category, lower(category) AS Low_cat FROM sales;
+
+
+SELECT NOW() AS current_datetime;
+
+select current_time() as timee ;
+
+SELECT DATE_FORMAT(order_date, '%Y-%m-%d') AS formatted_date FROM sales;
+
+update sales
+set order_date_real = str_to_date(order_date, '%m-%d-%Y') ;
+
+UPDATE sales
+SET `date` = STR_TO_DATE(order_date, '%m-%d-%Y');
+
+update sales
+set order_date_real = str_to_date(order_date,'%m/%d/%Y');
+
+alter table sales
+add column `date` date after order_id ;
+
+select * from sales ;
+
+SELECT order_date_real, DATE_ADD(order_date_real, INTERVAL 7 DAY) AS future_date FROM sales;
+
+desc sales ;
+
+SET SESSION sql_mode = '';
+
+set sql_safe_updates = 0
+
+select year(order_date_real) as yeardate, month(order_date_real) as monthdate,  day(order_date_real) as daydate, week(order_date_real) as weekdate  from sales ;
